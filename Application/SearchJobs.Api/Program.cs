@@ -2,6 +2,7 @@ using Hangfire;
 using SearchJobs.Api;
 using SearchJobs.Api.Interfaces;
 using DotNetEnv;
+using SearchJobs.Api.JobProcessors.DispatchQueueProcessor;
 
 Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env"));
 
@@ -13,7 +14,9 @@ builder.Services.AddHangfireServerConfiguration(builder.Configuration);
 
 
 builder.Services.AddSqsHandlerConfiguration(builder.Configuration);
+builder.Services.AddDispatchSearchServiceClientConfiguration(builder.Configuration);
 
+builder.Services.AddTransient(typeof(IJobEnqueuer<>), typeof(HangfireJobEnqueuer<>));
 builder.Services.AddTransient<IMessagesHandler, SqsMessagesHandler>();
 builder.Services.AddSingleton<SqsPollingBackgroundService>();
 builder.Services.AddHostedService<SqsPollingBackgroundService>();

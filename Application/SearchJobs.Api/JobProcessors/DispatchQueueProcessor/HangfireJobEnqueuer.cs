@@ -1,11 +1,15 @@
-﻿using SearchJobs.Api.Models;
+﻿using System.Linq.Expressions;
+using Hangfire;
+using Hangfire.Common;
+using SearchJobs.Api.Models;
 
 namespace SearchJobs.Api.JobProcessors.DispatchQueueProcessor;
 
-public class HangfireJobEnqueuer : IJobEnqueuer
+public class HangfireJobEnqueuer<T>(IBackgroundJobClient hangfireClient, ILogger<HangfireJobEnqueuer<T>> logger) : IJobEnqueuer<T>
 {
-    public string Enqueue(DispatchWriterEvent dispatchEvent)
+    public string Enqueue(Expression<Func<T, Task>> job)
     {
-        throw new NotImplementedException();
+        var jobId = hangfireClient.Enqueue(job);
+        return jobId;
     }
 }
