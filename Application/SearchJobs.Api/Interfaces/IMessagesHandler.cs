@@ -4,5 +4,7 @@ namespace SearchJobs.Api.Interfaces;
 
 public interface IMessagesHandler
 {
-    Task<DispatchWriterEvent> GetMessageAsync(string queueUrl, int waitTime, CancellationToken stoppingToken);
+    Task<(DispatchWriterEvent? Event, string? ReceiptHandle)> GetMessageAsync(string queueUrl, int waitTime, CancellationToken stoppingToken);
+
+    Task DeleteMessageAsync(string queueUrl, string receiptHandle);
 }

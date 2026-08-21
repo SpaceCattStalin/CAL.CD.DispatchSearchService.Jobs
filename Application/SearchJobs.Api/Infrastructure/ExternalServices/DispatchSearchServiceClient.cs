@@ -9,6 +9,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
     public async Task<string> IndexAsync(DispatchModel dispatchModel, CancellationToken ct)
     {
         var response = await httpClient.PostAsJsonAsync("/api/dispatch", dispatchModel, ct);
+       
         response.EnsureSuccessStatusCode(); // non-2xx throws -> Hangfire retries the job
 
         var body = await response.Content.ReadFromJsonAsync<IndexResult>(ct);

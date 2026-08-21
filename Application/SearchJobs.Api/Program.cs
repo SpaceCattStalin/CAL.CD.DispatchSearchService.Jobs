@@ -18,6 +18,7 @@ builder.Services.AddDispatchSearchServiceClientConfiguration(builder.Configurati
 
 builder.Services.AddTransient(typeof(IJobEnqueuer<>), typeof(HangfireJobEnqueuer<>));
 builder.Services.AddTransient<IMessagesHandler, SqsMessagesHandler>();
+builder.Services.AddTransient<IDispatchJobProcessor, DispatchJobProcessor>();
 builder.Services.AddSingleton<SqsPollingBackgroundService>();
 builder.Services.AddHostedService<SqsPollingBackgroundService>();
 
