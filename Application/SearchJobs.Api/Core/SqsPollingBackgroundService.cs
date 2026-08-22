@@ -56,7 +56,7 @@ public class SqsPollingBackgroundService(IMessagesHandler handler, IJobEnqueuer<
             }
             catch (Exception exception)
             {
-                logger.LogError("Unexpected error when polling {QueueURL}", queueUrl);
+                logger.LogError("Unexpected error when polling {QueueURL}. Details: {Error}", queueUrl, exception.InnerException);
             }
         }
 
