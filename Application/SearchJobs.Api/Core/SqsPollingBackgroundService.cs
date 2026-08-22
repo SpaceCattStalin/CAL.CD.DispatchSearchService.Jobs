@@ -37,8 +37,11 @@ public class SqsPollingBackgroundService(IMessagesHandler handler, IJobEnqueuer<
                 switch (eventType)
                 {
                     case Models.Enums.EventType.Create:
-                    case Models.Enums.EventType.Update:
                         jobEnqueuer.Enqueue(processor => processor.ProcessIndexAsync(message.Event.ToDispatchModel(), queueUrl, message.ReceiptHandle, CancellationToken.None));
+                        break;
+                        
+                    case Models.Enums.EventType.Update:
+                        jobEnqueuer.Enqueue(processor => processor.ProcessUpdateAsync(message.Event.ToDispatchModel(), queueUrl, message.ReceiptHandle, CancellationToken.None));
                         break;
 
                     case Models.Enums.EventType.Delete:

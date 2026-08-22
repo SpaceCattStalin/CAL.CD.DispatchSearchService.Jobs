@@ -17,4 +17,11 @@ public class DispatchJobProcessor(IDispatchSearchServiceClient searchClient, IMe
         await searchClient.DeleteAsync(dispatchId, ct);
         await messagesHandler.DeleteMessageAsync(queueUrl, receiptHandle);
     }
+
+    public async Task ProcessUpdateAsync(DispatchModel dispatchModel, string queueUrl, string receiptHandle, CancellationToken ct)
+    {
+        await searchClient.UpdateAsync(dispatchModel, ct);
+        await messagesHandler.DeleteMessageAsync(queueUrl, receiptHandle);
+    }
+
 }
