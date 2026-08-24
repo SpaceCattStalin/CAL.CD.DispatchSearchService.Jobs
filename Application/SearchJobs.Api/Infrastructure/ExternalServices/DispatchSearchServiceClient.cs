@@ -10,7 +10,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
     {
         var response = await httpClient.PostAsJsonAsync("/api/dispatch", dispatchModel, ct);
 
-        response.EnsureSuccessStatusCode(); // non-2xx throws -> Hangfire retries the job
+        response.EnsureSuccessStatusCode(); 
 
         var body = await response.Content.ReadFromJsonAsync<IndexResult>(ct);
         return body?.Id
@@ -22,7 +22,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
         var response = await httpClient.DeleteAsync($"api/dispatch/{dispatchId}", ct);
 
         if (response.StatusCode == HttpStatusCode.NotFound)
-            return; // already gone — delete is idempotent, not an error
+            return; 
 
         response.EnsureSuccessStatusCode();
     }
@@ -34,6 +34,12 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
         response.EnsureSuccessStatusCode();
     }
 
+    public async Task BatchUpsertAsync(List<DispatchModel> dispatchModels)
+    {
+        var response = await httpClient.PutAsJsonAsync("/api/batch-update", dispatchModels);
+
+        response.EnsureSuccessStatusCode();
+    }
 
     internal sealed record IndexResult(string Id);
 }

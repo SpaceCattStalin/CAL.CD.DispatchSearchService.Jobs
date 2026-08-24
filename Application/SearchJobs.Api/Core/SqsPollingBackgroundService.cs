@@ -3,7 +3,7 @@ using SearchJobs.Api.Models;
 
 namespace SearchJobs.Api;
 
-public class SqsPollingBackgroundService(IMessagesHandler handler, IJobEnqueuer<IDispatchJobProcessor> jobEnqueuer, IConfiguration configuration, ILogger<SqsPollingBackgroundService> logger) : BackgroundService
+public class SqsPollingBackgroundService(IDispatchServiceMessagesHandler handler, IJobEnqueuer<IDispatchJobProcessor> jobEnqueuer, IConfiguration configuration, ILogger<SqsPollingBackgroundService> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -39,7 +39,7 @@ public class SqsPollingBackgroundService(IMessagesHandler handler, IJobEnqueuer<
                     case Models.Enums.EventType.Create:
                         jobEnqueuer.Enqueue(processor => processor.ProcessIndexAsync(message.Event.ToDispatchModel(), queueUrl, message.ReceiptHandle, CancellationToken.None));
                         break;
-                        
+
                     case Models.Enums.EventType.Update:
                         jobEnqueuer.Enqueue(processor => processor.ProcessUpdateAsync(message.Event.ToDispatchModel(), queueUrl, message.ReceiptHandle, CancellationToken.None));
                         break;
