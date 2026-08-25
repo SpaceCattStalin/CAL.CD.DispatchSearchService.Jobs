@@ -1,14 +1,14 @@
+using Microsoft.Extensions.Options;
+
 namespace SearchJobs.Api;
 
 public static class DispatchServiceClientConfiguration
 {
-    public static IServiceCollection AddDispatchServiceClientConfiguration(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddDispatchServiceClientConfiguration(this IServiceCollection services)
     {
-        var baseUrl = configuration.GetSection("DispatchService:BaseUrl").Get<string>()
-            ?? throw new InvalidOperationException("Missing configuration value 'DispatchService__BaseUrl'.");
-
-        services.AddHttpClient<IDispatchServiceClient, DispatchServiceClient>(client =>
+        services.AddHttpClient<IDispatchServiceClient, DispatchServiceClient>((sp, client) =>
         {
+            var baseUrl = sp.GetRequiredService<IOptions<AppSettings>>().Value.DispatchService.BaseUrl;
             client.BaseAddress = new Uri(baseUrl);
         });
 
