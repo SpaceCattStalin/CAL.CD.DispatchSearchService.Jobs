@@ -8,7 +8,7 @@ public class DispatchJobProcessor(IDispatchSearchServiceClient searchClient, IDi
 {
     public async Task ProcessIndexAsync(DispatchModel dispatchModel, string queueUrl, string receiptHandle, CancellationToken ct)
     {
-        // Should use CreateAsync as it is more explicit than IndexAsync (IndexAsync is used for upsert operation)
+        // Can use CreateAsync as it is more explicit than IndexAsync (IndexAsync is used for upsert operation)
         await searchClient.IndexAsync(dispatchModel, ct);
         await messagesHandler.DeleteMessageAsync(queueUrl, receiptHandle);
     }

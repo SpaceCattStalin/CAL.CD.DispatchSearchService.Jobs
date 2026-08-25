@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 
 namespace SearchJobs.Api;
 
@@ -36,4 +37,5 @@ public class ServiceSettings
 {
     [Required]
     public required string BaseUrl { get; init; }
+    public string? ApiKey { get; init; }
 }
