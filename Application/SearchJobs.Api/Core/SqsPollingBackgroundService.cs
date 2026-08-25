@@ -62,7 +62,5 @@ public class SqsPollingBackgroundService(IDispatchServiceMessagesHandler handler
                 logger.LogError("Unexpected error when polling {QueueURL}. Details: {Error}", queueUrl, exception.InnerException);
             }
         }
-
-        // return Task.CompletedTask;
     }
 }

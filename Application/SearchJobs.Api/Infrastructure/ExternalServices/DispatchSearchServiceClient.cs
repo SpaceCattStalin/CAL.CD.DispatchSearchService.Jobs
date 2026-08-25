@@ -10,7 +10,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
     {
         var response = await httpClient.PostAsJsonAsync("/api/dispatch", dispatchModel, ct);
 
-        response.EnsureSuccessStatusCode(); 
+        response.EnsureSuccessStatusCode();
 
         var body = await response.Content.ReadFromJsonAsync<IndexResult>(ct);
         return body?.Id
@@ -22,7 +22,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
         var response = await httpClient.DeleteAsync($"api/dispatch/{dispatchId}", ct);
 
         if (response.StatusCode == HttpStatusCode.NotFound)
-            return; 
+            return;
 
         response.EnsureSuccessStatusCode();
     }
@@ -36,7 +36,12 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
 
     public async Task BatchUpsertAsync(List<DispatchModel> dispatchModels)
     {
-        var response = await httpClient.PutAsJsonAsync("/api/batch-update", dispatchModels);
+        Console.WriteLine("Total count {0}", dispatchModels.Count);
+        foreach (var model in dispatchModels)
+        {
+            Console.WriteLine(model.ToString());
+        }
+        var response = await httpClient.PutAsJsonAsync("/api/dispatch/batch-update", new { Documents = dispatchModels });
 
         response.EnsureSuccessStatusCode();
     }

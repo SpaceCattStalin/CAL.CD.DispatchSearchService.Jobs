@@ -25,7 +25,7 @@ builder.Services.AddSingleton<SqsPollingBackgroundService>();
 builder.Services.AddHostedService<SqsPollingBackgroundService>();
 
 builder.Services.AddControllers();
-builder.Services.AddTransient<IBackfillJob, DispatchBackfillJob>();
+builder.Services.AddTransient<ISyncJob, DispatchSyncJob>();
 
 var app = builder.Build();
 
