@@ -1,15 +1,17 @@
+using Microsoft.Extensions.Options;
 using SearchJobs.Api.Models;
 
 namespace SearchJobs.Api;
 
-public class DispatchBackfillJob(
+public class DispatchSyncJob(
     IDispatchServiceClient dispatchServiceClient,
     IDispatchSearchServiceClient dispatchSearchServiceClient,
     ICheckpointStore checkpointStore,
-    ILogger<DispatchBackfillJob> logger) : IBackfillJob
+    ILogger<DispatchSyncJob> logger,
+    IOptions<AppSettings> appSettings) : ISyncJob
 {
-    private const string JobName = nameof(DispatchBackfillJob);
-
+    private const string JobName = nameof(DispatchSyncJob);
+    private readonly string _apiKey = appSettings.Value.DispatchService.ApiKey!;
     public async Task RunAsync()
     {
         var cursor = await checkpointStore.GetLastCursorAsync(JobName);
@@ -20,7 +22,7 @@ public class DispatchBackfillJob(
 
         while (true)
         {
-            var page = await dispatchServiceClient.GetAsync(cursor);
+            var page = await dispatchServiceClient.GetAsync(cursor, _apiKey);
             var dispatchModels = page.Items.Select(dto => dto.ToDispatchModel()).ToList();
 
             if (dispatchModels.Count > 0)

@@ -1,20 +1,23 @@
 ﻿using Hangfire;
 using Hangfire.PostgreSql;
+using Microsoft.Extensions.Options;
 
 namespace SearchJobs.Api;
 
 public static class HangfireServerConfiguration
 {
-    public static IServiceCollection AddHangfireServerConfiguration(this IServiceCollection services, IConfiguration globalConfiguration)
+    public static IServiceCollection AddHangfireServerConfiguration(this IServiceCollection services)
     {
-        var connectionString = globalConfiguration.GetSection("ConnectionStrings:HangfireDb").Get<string>();
+        services.AddHangfire((sp, configuration) =>
+        {
+            var connectionString = sp.GetRequiredService<IOptions<AppSettings>>().Value.ConnectionStrings.HangfireDb;
 
-        services.AddHangfire(configuration => configuration
-            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(configuration => configuration.UseNpgsqlConnection(connectionString))
-        );
+            configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(cfg => cfg.UseNpgsqlConnection(connectionString));
+        });
 
         services.AddHangfireServer();
 

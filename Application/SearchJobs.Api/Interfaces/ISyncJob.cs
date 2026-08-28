@@ -1,6 +1,6 @@
 ﻿namespace SearchJobs.Api;
 
-public interface IBackfillJob
+public interface ISyncJob
 {
     Task RunAsync();
 }
