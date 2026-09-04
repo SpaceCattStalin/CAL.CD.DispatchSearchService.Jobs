@@ -1,22 +1,15 @@
-﻿using SearchJobs.Api.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using SearchJobs.Api.Interfaces;
 using SearchJobs.Api.Models;
 
 namespace SearchJobs.Api;
 
-public class SqsPollingBackgroundService(IMessagesHandler handler, IJobEnqueuer<IDispatchJobProcessor> jobEnqueuer, IConfiguration configuration, ILogger<SqsPollingBackgroundService> logger) : BackgroundService
+public class SqsPollingBackgroundService(IDispatchServiceMessagesHandler handler, IJobEnqueuer<IDispatchJobProcessor> jobEnqueuer, IOptions<AppSettings> appSettings, ILogger<SqsPollingBackgroundService> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
-        var queueUrl = configuration.GetSection("QueueUrl:PrimaryQueue").Get<string>();
-
-        if (string.IsNullOrEmpty(queueUrl))
-            throw new ArgumentException("QueueUrl:PrimaryQueue is empty");
-
-        var pollingTime = configuration.GetSection("QueueUrl:PollingTime").Get<int>();
-
-        if (pollingTime <= 0)
-            throw new ArgumentException("QueueUrl:PollingTime is empty");
+        var queueUrl = appSettings.Value.QueueUrl.PrimaryQueue;
+        var pollingTime = appSettings.Value.QueueUrl.PollingTime;
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -37,8 +30,11 @@ public class SqsPollingBackgroundService(IMessagesHandler handler, IJobEnqueuer<
                 switch (eventType)
                 {
                     case Models.Enums.EventType.Create:
-                    case Models.Enums.EventType.Update:
                         jobEnqueuer.Enqueue(processor => processor.ProcessIndexAsync(message.Event.ToDispatchModel(), queueUrl, message.ReceiptHandle, CancellationToken.None));
+                        break;
+
+                    case Models.Enums.EventType.Update:
+                        jobEnqueuer.Enqueue(processor => processor.ProcessUpdateAsync(message.Event.ToDispatchModel(), queueUrl, message.ReceiptHandle, CancellationToken.None));
                         break;
 
                     case Models.Enums.EventType.Delete:
@@ -48,7 +44,7 @@ public class SqsPollingBackgroundService(IMessagesHandler handler, IJobEnqueuer<
             }
             catch (NullReferenceException exception)
             {
-                logger.LogError("Empty queue {QueueURL}. \nException details: {Details}", queueUrl, exception.Message);
+                logger.LogInformation("Empty queue {QueueURL}. \nException details: {Details}", queueUrl, exception.Message);
             }
             catch (ArgumentNullException exception)
             {
@@ -56,10 +52,8 @@ public class SqsPollingBackgroundService(IMessagesHandler handler, IJobEnqueuer<
             }
             catch (Exception exception)
             {
-                logger.LogError("Unexpected error when polling {QueueURL}", queueUrl);
+                logger.LogError("Unexpected error when polling {QueueURL}. Details: {Error}", queueUrl, exception.InnerException);
             }
         }
-
-        // return Task.CompletedTask;
     }
 }

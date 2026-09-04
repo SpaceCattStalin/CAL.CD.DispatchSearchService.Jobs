@@ -2,7 +2,7 @@
 
 namespace SearchJobs.Api.Interfaces;
 
-public interface IMessagesHandler
+public interface IDispatchServiceMessagesHandler
 {
     Task<(DispatchWriterEvent? Event, string? ReceiptHandle)> GetMessageAsync(string queueUrl, int waitTime, CancellationToken stoppingToken);
 

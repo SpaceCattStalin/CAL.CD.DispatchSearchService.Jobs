@@ -7,7 +7,7 @@ using System.Text.Json;
 namespace SearchJobs.Api;
 
 public class SqsMessagesHandler(IAmazonSQS sqsClient, ILogger<SqsMessagesHandler> logger)
-                                                                            : IMessagesHandler
+                                                                            : IDispatchServiceMessagesHandler
 {
 
     /// <summary>

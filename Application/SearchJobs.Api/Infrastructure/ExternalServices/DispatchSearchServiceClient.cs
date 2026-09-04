@@ -8,9 +8,9 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
 {
     public async Task<string> IndexAsync(DispatchModel dispatchModel, CancellationToken ct)
     {
-        var response = await httpClient.PostAsJsonAsync("/api/dispatch", dispatchModel, ct);
-       
-        response.EnsureSuccessStatusCode(); // non-2xx throws -> Hangfire retries the job
+        var response = await httpClient.PostAsJsonAsync("api/dispatch", dispatchModel, ct);
+
+        response.EnsureSuccessStatusCode();
 
         var body = await response.Content.ReadFromJsonAsync<IndexResult>(ct);
         return body?.Id
@@ -22,7 +22,26 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
         var response = await httpClient.DeleteAsync($"api/dispatch/{dispatchId}", ct);
 
         if (response.StatusCode == HttpStatusCode.NotFound)
-            return; // already gone — delete is idempotent, not an error
+            return;
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateAsync(DispatchModel dispatchModel, CancellationToken ct)
+    {
+        var response = await httpClient.PutAsJsonAsync("api/dispatch", dispatchModel, ct);
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task BatchUpsertAsync(List<DispatchModel> dispatchModels)
+    {
+        Console.WriteLine("Total count {0}", dispatchModels.Count);
+        foreach (var model in dispatchModels)
+        {
+            Console.WriteLine(model.ToString());
+        }
+        var response = await httpClient.PutAsJsonAsync("api/dispatch/batch-update", new { Documents = dispatchModels });
 
         response.EnsureSuccessStatusCode();
     }
