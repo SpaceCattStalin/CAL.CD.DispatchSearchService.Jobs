@@ -8,7 +8,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
 {
     public async Task<string> IndexAsync(DispatchModel dispatchModel, CancellationToken ct)
     {
-        var response = await httpClient.PostAsJsonAsync("/api/dispatch", dispatchModel, ct);
+        var response = await httpClient.PostAsJsonAsync("api/dispatch", dispatchModel, ct);
 
         response.EnsureSuccessStatusCode();
 
@@ -29,7 +29,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
 
     public async Task UpdateAsync(DispatchModel dispatchModel, CancellationToken ct)
     {
-        var response = await httpClient.PutAsJsonAsync("/api/dispatch", dispatchModel, ct);
+        var response = await httpClient.PutAsJsonAsync("api/dispatch", dispatchModel, ct);
 
         response.EnsureSuccessStatusCode();
     }
@@ -41,7 +41,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
         {
             Console.WriteLine(model.ToString());
         }
-        var response = await httpClient.PutAsJsonAsync("/api/dispatch/batch-update", new { Documents = dispatchModels });
+        var response = await httpClient.PutAsJsonAsync("api/dispatch/batch-update", new { Documents = dispatchModels });
 
         response.EnsureSuccessStatusCode();
     }

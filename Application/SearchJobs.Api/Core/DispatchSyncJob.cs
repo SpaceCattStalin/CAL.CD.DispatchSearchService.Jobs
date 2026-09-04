@@ -22,7 +22,7 @@ public class DispatchSyncJob(
 
         while (true)
         {
-            var page = await dispatchServiceClient.GetAsync(cursor, _apiKey);
+            PageResponseWithCursor<DispatchWriterDto> page = await dispatchServiceClient.GetAsync(cursor, _apiKey);
             var dispatchModels = page.Items.Select(dto => dto.ToDispatchModel()).ToList();
 
             if (dispatchModels.Count > 0)
@@ -36,14 +36,11 @@ public class DispatchSyncJob(
 
             cursor = page.Cursor;
 
-            // Checkpoint only after the current page is successfully upserted, so a crash mid-run
-            // resumes from the last fully-processed page instead of re-walking from the start.
             await checkpointStore.SaveCursorAsync(JobName, cursor);
 
             logger.LogInformation("{JobName} checkpointed at cursor '{Cursor}', {Total} dispatches processed so far.", JobName, cursor, totalProcessed);
         }
 
-        // Full run completed — clear the checkpoint so the next manual trigger starts from the beginning again.
         await checkpointStore.SaveCursorAsync(JobName, string.Empty);
 
         logger.LogInformation("{JobName} completed, {Total} dispatches processed.", JobName, totalProcessed);

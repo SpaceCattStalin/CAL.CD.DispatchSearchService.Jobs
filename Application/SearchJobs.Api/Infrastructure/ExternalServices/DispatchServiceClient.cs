@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using SearchJobs.Api.Models;
 
 namespace SearchJobs.Api;
@@ -7,7 +6,7 @@ public class DispatchServiceClient(HttpClient httpClient) : IDispatchServiceClie
 {
     public async Task<PageResponseWithCursor<DispatchWriterDto>> GetAsync(string cursor, string auth, int limit = 500)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"api/dispatch?cursor={Uri.EscapeDataString(cursor)}&limit={limit}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/dispatch?cursor={cursor}&limit={limit}");
         request.Headers.Add("Authorization", auth);
 
         var response = await httpClient.SendAsync(request);

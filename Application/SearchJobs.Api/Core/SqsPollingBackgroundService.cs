@@ -44,7 +44,7 @@ public class SqsPollingBackgroundService(IDispatchServiceMessagesHandler handler
             }
             catch (NullReferenceException exception)
             {
-                logger.LogError("Empty queue {QueueURL}. \nException details: {Details}", queueUrl, exception.Message);
+                logger.LogInformation("Empty queue {QueueURL}. \nException details: {Details}", queueUrl, exception.Message);
             }
             catch (ArgumentNullException exception)
             {
