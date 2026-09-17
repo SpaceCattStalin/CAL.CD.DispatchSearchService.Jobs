@@ -7,6 +7,8 @@ public static class DispatchWriterDtoExtensions
         return new DispatchModel
         {
             DispatchId = dispatchDto.DispatchId,
+            CarrierId = dispatchDto.CarrierId,
+            ShipperId = dispatchDto.ShipperId,
             PriceTotal = (double)dispatchDto.PriceTotal,
             PickupDate = dispatchDto.PickupDate,
             DropoffDate = dispatchDto.DropoffDate,

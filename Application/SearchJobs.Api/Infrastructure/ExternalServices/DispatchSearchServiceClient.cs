@@ -4,7 +4,7 @@ using SearchJobs.Api.Models;
 
 namespace SearchJobs.Api;
 
-public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearchServiceClient
+public class DispatchSearchServiceClient(HttpClient httpClient, ILogger<DispatchSearchServiceClient> _logger) : IDispatchSearchServiceClient
 {
     public async Task<string> IndexAsync(DispatchModel dispatchModel, CancellationToken ct)
     {
@@ -36,11 +36,8 @@ public class DispatchSearchServiceClient(HttpClient httpClient) : IDispatchSearc
 
     public async Task BatchUpsertAsync(List<DispatchModel> dispatchModels)
     {
-        Console.WriteLine("Total count {0}", dispatchModels.Count);
-        foreach (var model in dispatchModels)
-        {
-            Console.WriteLine(model.ToString());
-        }
+        _logger.LogCritical("Total count {Count}", dispatchModels.Count);
+
         var response = await httpClient.PutAsJsonAsync("api/dispatch/batch-update", new { Documents = dispatchModels });
 
         response.EnsureSuccessStatusCode();
