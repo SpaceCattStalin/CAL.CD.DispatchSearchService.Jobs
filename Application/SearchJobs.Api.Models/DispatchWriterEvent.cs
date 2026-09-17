@@ -5,6 +5,8 @@ namespace SearchJobs.Api.Models;
 public class DispatchWriterEvent(
     EventType Type,
     Guid DispatchId,
+    Guid CarrierId,
+    Guid ShipperId,
     decimal PriceTotal,
     DateTime PickupDate,
     DateTime DropoffDate,
@@ -13,6 +15,8 @@ public class DispatchWriterEvent(
 {
     public EventType Type { get; } = Type;
     public Guid DispatchId { get; } = DispatchId;
+    public Guid CarrierId { get; set; } = CarrierId;
+    public Guid ShipperId { get; set; } = ShipperId;
     public decimal PriceTotal { get; } = PriceTotal;
     public DateTime PickupDate { get; } = PickupDate;
     public DateTime DropoffDate { get; } = DropoffDate;

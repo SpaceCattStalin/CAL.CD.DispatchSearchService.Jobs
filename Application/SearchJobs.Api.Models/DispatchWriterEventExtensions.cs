@@ -7,6 +7,8 @@ public static class DispatchWriterEventExtensions
         return new DispatchModel
         {
             DispatchId = dispatchEvent.DispatchId,
+            CarrierId = dispatchEvent.CarrierId,
+            ShipperId = dispatchEvent.ShipperId,
             PriceTotal = (double)dispatchEvent.PriceTotal,
             PickupDate = dispatchEvent.PickupDate,
             DropoffDate = dispatchEvent.DropoffDate,
