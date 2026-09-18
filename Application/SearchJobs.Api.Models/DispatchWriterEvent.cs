@@ -11,7 +11,8 @@ public class DispatchWriterEvent(
     DateTime PickupDate,
     DateTime DropoffDate,
     DispatchStatus DispatchStatus,
-    IEnumerable<DispatchWriterVehicle> Vehicles)
+    IEnumerable<DispatchWriterVehicle> Vehicles,
+    DateTime CreatedAt)
 {
     public EventType Type { get; } = Type;
     public Guid DispatchId { get; } = DispatchId;
@@ -22,6 +23,7 @@ public class DispatchWriterEvent(
     public DateTime DropoffDate { get; } = DropoffDate;
     public DispatchStatus DispatchStatus { get; } = DispatchStatus;
     public IEnumerable<DispatchWriterVehicle> Vehicles { get; } = Vehicles;
+    public DateTime CreatedAt { get; } = CreatedAt;
 }
 
 public class DispatchWriterVehicle(string? Vin)

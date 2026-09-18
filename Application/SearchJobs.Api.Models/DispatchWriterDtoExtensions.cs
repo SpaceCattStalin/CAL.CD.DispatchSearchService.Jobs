@@ -15,7 +15,8 @@ public static class DispatchWriterDtoExtensions
             DispatchStatus = dispatchDto.DispatchStatus.ToString(),
             Vehicles = dispatchDto.Vehicles
                 .Select(v => new VehicleModel { Vin = v.Vin ?? string.Empty })
-                .ToList()
+                .ToList(),
+            CreatedAt = dispatchDto.CreatedAt
         };
     }
 }

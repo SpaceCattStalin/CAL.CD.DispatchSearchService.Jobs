@@ -10,7 +10,8 @@ public class DispatchWriterDto(
     DateTime PickupDate,
     DateTime DropoffDate,
     DispatchStatus DispatchStatus,
-    IEnumerable<DispatchWriterVehicle> Vehicles)
+    IEnumerable<DispatchWriterVehicle> Vehicles,
+    DateTime CreatedAt)
 {
     public Guid DispatchId { get; } = DispatchId;
     public Guid CarrierId { get; set; } = CarrierId;
@@ -20,4 +21,5 @@ public class DispatchWriterDto(
     public DateTime DropoffDate { get; } = DropoffDate;
     public DispatchStatus DispatchStatus { get; } = DispatchStatus;
     public IEnumerable<DispatchWriterVehicle> Vehicles { get; } = Vehicles;
+    public DateTime CreatedAt { get; } = CreatedAt;
 }
