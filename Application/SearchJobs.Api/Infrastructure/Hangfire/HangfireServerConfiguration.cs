@@ -18,6 +18,8 @@ public static class HangfireServerConfiguration
                 .UseRecommendedSerializerSettings()
                 .UsePostgreSqlStorage(cfg => cfg.UseNpgsqlConnection(connectionString));
         });
+        // DefaultRetryAttempts is 10
+        GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 1, OnAttemptsExceeded = AttemptsExceededAction.Delete });
 
         services.AddHangfireServer();
 

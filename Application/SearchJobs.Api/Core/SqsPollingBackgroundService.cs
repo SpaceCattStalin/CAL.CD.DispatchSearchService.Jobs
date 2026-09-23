@@ -1,10 +1,16 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Hangfire;
+using Microsoft.Extensions.Options;
+using SearchJobs.Api.Core;
 using SearchJobs.Api.Interfaces;
 using SearchJobs.Api.Models;
 
 namespace SearchJobs.Api;
 
-public class SqsPollingBackgroundService(IDispatchServiceMessagesHandler handler, IJobEnqueuer<IDispatchJobProcessor> jobEnqueuer, IOptions<AppSettings> appSettings, ILogger<SqsPollingBackgroundService> logger) : BackgroundService
+public class SqsPollingBackgroundService(IDispatchServiceMessagesHandler handler,
+    IJobEnqueuer<IDispatchJobProcessor> jobEnqueuer,
+    IOptions<AppSettings> appSettings,
+    ILogger<SqsPollingBackgroundService> logger,
+    FailJobCleanupWorker cleanupWorker) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -41,6 +47,8 @@ public class SqsPollingBackgroundService(IDispatchServiceMessagesHandler handler
                         jobEnqueuer.Enqueue(processor => processor.ProcessDeleteAsync(message.Event.DispatchId, queueUrl, message.ReceiptHandle, CancellationToken.None));
                         break;
                 }
+
+                await Task.Run(() => ScheduleFailJobsCleanupJob("0 * * * *"));
             }
             catch (NullReferenceException exception)
             {
@@ -55,5 +63,12 @@ public class SqsPollingBackgroundService(IDispatchServiceMessagesHandler handler
                 logger.LogError("Unexpected error when polling {QueueURL}. Details: {Error}", queueUrl, exception.InnerException);
             }
         }
+    }
+
+    private void ScheduleFailJobsCleanupJob(string cronJobExpression)
+    {
+        logger.LogInformation("Scheduling Hangfire Failed Jobs Cleanup");
+        RecurringJob.AddOrUpdate("HangfireJobCleanup", () => cleanupWorker.Execute(JobCancellationToken.Null), cronJobExpression);
+        logger.LogInformation("Done Scheduling Hangfire Failed Jobs Cleanup");
     }
 }

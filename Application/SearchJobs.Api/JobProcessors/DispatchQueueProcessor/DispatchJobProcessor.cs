@@ -1,3 +1,4 @@
+using Hangfire;
 using SearchJobs.Api.Interfaces;
 using SearchJobs.Api.Models;
 
