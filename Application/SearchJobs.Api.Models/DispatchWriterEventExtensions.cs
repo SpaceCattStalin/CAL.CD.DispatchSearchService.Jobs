@@ -7,13 +7,16 @@ public static class DispatchWriterEventExtensions
         return new DispatchModel
         {
             DispatchId = dispatchEvent.DispatchId,
+            CarrierId = dispatchEvent.CarrierId,
+            ShipperId = dispatchEvent.ShipperId,
             PriceTotal = (double)dispatchEvent.PriceTotal,
             PickupDate = dispatchEvent.PickupDate,
             DropoffDate = dispatchEvent.DropoffDate,
             DispatchStatus = dispatchEvent.DispatchStatus.ToString(),
             Vehicles = dispatchEvent.Vehicles
                 .Select(v => new VehicleModel { Vin = v.Vin ?? string.Empty })
-                .ToList()
+                .ToList(),
+            CreatedAt = dispatchEvent.CreatedAt
         };
     }
 }

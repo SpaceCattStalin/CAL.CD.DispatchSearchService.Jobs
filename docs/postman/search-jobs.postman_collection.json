@@ -1,0 +1,50 @@
+{
+  "info": {
+    "name": "SearchJobs API (POST /api/jobs/sync)",
+    "description": "Covers POST /api/jobs/sync: enqueues DispatchSyncJob via Hangfire (fire-and-forget) and returns 202 Accepted with the enqueued Hangfire job id. No request body. No auth is configured on this project yet. Open {{baseUrl}}/hangfire (the Hangfire Dashboard) to watch the enqueued job move through Processing/Succeeded/Failed, or {{baseUrl}}/hangfire/jobs/details/{{jobId}} for one specific run.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5167" },
+    {
+      "key": "jobId",
+      "value": "",
+      "description": "Set by 'Trigger Sync -> 202'; the Hangfire job id returned in the response body."
+    }
+  ],
+  "item": [
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "Trigger Sync -> 202",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/sync",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobs", "sync"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 202', () => pm.response.to.have.status(202));",
+                  "const body = pm.response.json();",
+                  "pm.test('response has a jobId', () => {",
+                  "    pm.expect(body.jobId).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.collectionVariables.set('jobId', body.jobId);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

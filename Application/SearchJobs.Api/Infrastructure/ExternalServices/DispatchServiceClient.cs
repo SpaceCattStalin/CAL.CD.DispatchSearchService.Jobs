@@ -1,0 +1,20 @@
+using SearchJobs.Api.Models;
+
+namespace SearchJobs.Api;
+
+public class DispatchServiceClient(HttpClient httpClient) : IDispatchServiceClient
+{
+    public async Task<PageResponseWithCursor<DispatchWriterDto>> GetAsync(string cursor, string auth, int limit = 500)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/dispatch?cursor={cursor}&limit={limit}");
+        request.Headers.Add("Authorization", auth);
+
+        var response = await httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var body = await response.Content.ReadFromJsonAsync<PageResponseWithCursor<DispatchWriterDto>>();
+
+        return body
+            ?? throw new InvalidOperationException("DispatchService returned an empty response body for GET dispatch.");
+    }
+}

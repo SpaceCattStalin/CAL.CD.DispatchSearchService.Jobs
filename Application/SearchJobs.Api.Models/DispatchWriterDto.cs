@@ -2,8 +2,7 @@ using SearchJobs.Api.Models.Enums;
 
 namespace SearchJobs.Api.Models;
 
-public class DispatchWriterEvent(
-    EventType Type,
+public class DispatchWriterDto(
     Guid DispatchId,
     Guid CarrierId,
     Guid ShipperId,
@@ -14,7 +13,6 @@ public class DispatchWriterEvent(
     IEnumerable<DispatchWriterVehicle> Vehicles,
     DateTime CreatedAt)
 {
-    public EventType Type { get; } = Type;
     public Guid DispatchId { get; } = DispatchId;
     public Guid CarrierId { get; set; } = CarrierId;
     public Guid ShipperId { get; set; } = ShipperId;
@@ -24,9 +22,4 @@ public class DispatchWriterEvent(
     public DispatchStatus DispatchStatus { get; } = DispatchStatus;
     public IEnumerable<DispatchWriterVehicle> Vehicles { get; } = Vehicles;
     public DateTime CreatedAt { get; } = CreatedAt;
-}
-
-public class DispatchWriterVehicle(string? Vin)
-{
-    public string? Vin { get; } = Vin;
 }

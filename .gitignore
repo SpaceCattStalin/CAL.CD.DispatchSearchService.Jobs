@@ -61,3 +61,4 @@ ref_design_images
 notes.txt
 *.md
 *.sql
+.env
