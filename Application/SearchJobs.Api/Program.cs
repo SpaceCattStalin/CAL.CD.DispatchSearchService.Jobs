@@ -1,6 +1,10 @@
+using System.Text;
 using Hangfire;
-using Hangfire.Storage;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using SearchJobs.Api;
+using SearchJobs.Api.Authentication;
 using SearchJobs.Api.Core;
 using SearchJobs.Api.Interfaces;
 using SearchJobs.Api.JobProcessors.DispatchQueueProcessor;
@@ -31,22 +35,35 @@ builder.Services.AddControllers();
 builder.Services.AddTransient<ISyncJob, DispatchSyncJob>();
 builder.Services.AddTransient<FailJobCleanupWorker>();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+
+builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+    .Configure<IOptions<AppSettings>>((options, appSettings) =>
+    {
+        var jwt = appSettings.Value.Jwt;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwt.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwt.Audience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey)),
+            ValidateLifetime = true
+        };
+    });
+    
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("sync:update-all", policy =>
+       policy.Requirements.Add(new PermissionAuthorizationRequirement("sync:update-all")));
+});
+
 var app = builder.Build();
 
 app.UseHangfireDashboard();
-
-// var api = JobStorage.Current.GetMonitoringApi(); 
-// var failedJobs = api.FailedJobs(0, 1000 /* limit */);
-
-// while (failedJobs.Count > 0)
-// {
-//     foreach (var job in failedJobs)
-//     {
-//         BackgroundJob.Delete(job.Key);
-//     }
-
-//     failedJobs = monitor.FailedJobs(0, 1000 /* limit */);
-// }
 
 if (app.Environment.IsDevelopment())
 {
@@ -54,6 +71,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

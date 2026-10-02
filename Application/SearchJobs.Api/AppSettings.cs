@@ -15,6 +15,9 @@ public class AppSettings
     public required ServiceSettings SearchService { get; init; }
 
     [Required]
+    public required JwtSettings Jwt { get; init; }
+
+    [Required]
     public required ServiceSettings DispatchService { get; init; }
 }
 
@@ -39,3 +42,19 @@ public class ServiceSettings
     public required string BaseUrl { get; init; }
     public string? ApiKey { get; init; }
 }
+
+public class JwtSettings
+{
+    [Required]
+    public required string Issuer { get; init; }
+
+    [Required]
+    public required string Audience { get; init; }
+
+    [Required]
+    public required string SigningKey { get; init; }
+
+    [Range(1, int.MaxValue)]
+    public int ExpiryMinutes { get; init; }
+}
+

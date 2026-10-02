@@ -64,7 +64,7 @@ public class DispatchSearchServiceClient(HttpClient httpClient, ILogger<Dispatch
         _logger.LogCritical("Total count {Count}", dispatchModels.Count);
 
         var response = await httpClient.PutAsJsonAsync("api/dispatch/batch-update", new { Documents = dispatchModels });
-
+        
         response.EnsureSuccessStatusCode();
     }
 

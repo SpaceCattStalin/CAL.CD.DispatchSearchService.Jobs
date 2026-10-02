@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SearchJobs.Api;
@@ -7,7 +8,8 @@ namespace SearchJobs.Api;
 public class JobsController(IJobEnqueuer<ISyncJob> jobEnqueuer) : ControllerBase
 {
     [HttpPost("sync")]
-    public IActionResult TriggerBackfill()
+    [Authorize(Policy = "sync:update-all")]
+    public IActionResult TriggerSync()
     {
         var jobId = jobEnqueuer.Enqueue(job => job.RunAsync());
 

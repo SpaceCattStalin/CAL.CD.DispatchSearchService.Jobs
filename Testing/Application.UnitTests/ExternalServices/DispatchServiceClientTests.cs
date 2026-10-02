@@ -8,13 +8,17 @@ namespace Application.UnitTests;
 
 public class DispatchServiceClientTests
 {
+    private static readonly Guid shipperCompanyId = Guid.Parse("30000000-0000-0000-0000-000000000001");
+    private static readonly Guid carrierCompanyId = Guid.Parse("50000000-0000-0000-0000-000000000003");
 
     [Fact]
     public async Task GetAsync_ValidResponse_ReturnDeserializeBody()
     {
         var expectedBody = new PageResponseWithCursor<DispatchWriterDto>(
             Items: new List<DispatchWriterDto>{
-                new DispatchWriterDto(Guid.NewGuid(), 100.00m, DateTime.UtcNow, DateTime.UtcNow.AddDays(1), DispatchStatus.PendingPickup, []),
+                new DispatchWriterDto(Guid.NewGuid(), carrierCompanyId, shipperCompanyId,
+                100.00m, DateTime.UtcNow, DateTime.UtcNow.AddDays(1),
+                DispatchStatus.PendingPickup, [], DateTime.UtcNow),
             },
             Cursor: "def"
         );
@@ -89,7 +93,8 @@ public class DispatchServiceClientTests
         var expectedBody = new PageResponseWithCursor<DispatchWriterDto>(
             Items: new List<DispatchWriterDto>
             {
-                new DispatchWriterDto(Guid.NewGuid(), 100.00m, DateTime.UtcNow, DateTime.UtcNow.AddDays(1), DispatchStatus.PendingPickup, [])
+                new DispatchWriterDto(Guid.NewGuid(), carrierCompanyId, shipperCompanyId, 100.00m,
+                DateTime.UtcNow, DateTime.UtcNow.AddDays(1), DispatchStatus.PendingPickup, [], DateTime.UtcNow)
             },
 
             Cursor: "def"
@@ -121,7 +126,9 @@ public class DispatchServiceClientTests
         var expectedBody = new PageResponseWithCursor<DispatchWriterDto>(
             Items: new List<DispatchWriterDto>
             {
-                new DispatchWriterDto(Guid.NewGuid(), 100.00m, DateTime.UtcNow, DateTime.UtcNow.AddDays(1), DispatchStatus.PendingPickup, [])
+                new DispatchWriterDto(Guid.NewGuid(),carrierCompanyId, shipperCompanyId, 100.00m,
+                DateTime.UtcNow, DateTime.UtcNow.AddDays(1),
+                DispatchStatus.PendingPickup, [], DateTime.UtcNow)
             },
             Cursor: "def"
         );
@@ -153,7 +160,9 @@ public class DispatchServiceClientTests
         var expectedBody = new PageResponseWithCursor<DispatchWriterDto>(
             Items: new List<DispatchWriterDto>
             {
-                new DispatchWriterDto(Guid.NewGuid(), 100.00m, DateTime.UtcNow, DateTime.UtcNow.AddDays(1), DispatchStatus.PendingPickup, [])
+                new DispatchWriterDto(Guid.NewGuid(), carrierCompanyId, shipperCompanyId, 100.00m,
+                DateTime.UtcNow, DateTime.UtcNow.AddDays(1),
+                DispatchStatus.PendingPickup, [], DateTime.UtcNow)
             },
             Cursor: "def"
         );
